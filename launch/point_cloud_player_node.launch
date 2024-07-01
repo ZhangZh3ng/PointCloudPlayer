@@ -1,0 +1,5 @@
+<launch>
+
+  <node name="point_cloud_player_node" pkg="point_cloud_player" type="point_cloud_player_node" output="screen">
+    </node>
+</launch>
