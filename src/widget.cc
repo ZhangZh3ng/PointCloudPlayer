@@ -14,7 +14,7 @@ Widget::Widget(ros::NodeHandle nh, QWidget* parent)
     : QWidget(parent),
       ui_(new Ui::Widget),
       publisher_thread_(new PointCloudPublisher(nh, this)),
-      is_playing_(false),
+      is_runing_(false),
       is_looping_(false),
       curr_index_(0),
       dataset_(std::make_shared<KittiDataset>()) {
@@ -36,6 +36,9 @@ Widget::Widget(ros::NodeHandle nh, QWidget* parent)
   ui_->startButton->setEnabled(false);
   ui_->pauseButton->setEnabled(false);
   ui_->loopButton->setEnabled(false);
+  ui_->runStopButton->setText("Run");
+
+  PrintWelcomInfo();
 }
 
 Widget::~Widget() {
@@ -117,18 +120,18 @@ void Widget::on_fileButton_clicked() {
 }
 
 void Widget::on_runStopButton_clicked() {
-  if (is_playing_) {
+  if (is_runing_) {
     publisher_thread_->Stop();
     publisher_thread_->wait();
-    is_playing_ = false;
+    is_runing_ = false;
     ToStopState();
   } else {
     if (!file_pathes_.empty()) {
-      is_playing_ = true;
-      publisher_thread_->SetFilePaths(file_pathes_);
-      publisher_thread_->start();
-      ToRunState();
+      is_runing_ = true;
       ResetPublisherThread();
+      ToRunState();
+
+      publisher_thread_->start();
     } else {
       ui_->outputTextEdit->append("Error: No point cloud files to play.");
     }
@@ -137,12 +140,12 @@ void Widget::on_runStopButton_clicked() {
 
 void Widget::on_startButton_clicked() {
   publisher_thread_->Resume();
-  ui_->outputTextEdit->append("Playback resumed.");
+  ui_->outputTextEdit->append("PublishThread resumed.");
 }
 
 void Widget::on_pauseButton_clicked() {
   publisher_thread_->Pause();
-  ui_->outputTextEdit->append("Playback paused.");
+  ui_->outputTextEdit->append("PublishThread paused.");
 }
 
 void Widget::on_loopButton_clicked() {
@@ -208,8 +211,8 @@ void Widget::UpdateProgressBar(int value) {
 void Widget::PublishDone() {
   publisher_thread_->Stop();
   publisher_thread_->wait();
-  is_playing_ = false;
-  ui_->outputTextEdit->append("Playback stopped.");
+  is_runing_ = false;
+  ui_->outputTextEdit->append("PublishThread stopped.");
   ui_->runStopButton->setText("Run");
   ui_->startButton->setEnabled(false);
   ui_->pauseButton->setEnabled(false);
@@ -217,7 +220,7 @@ void Widget::PublishDone() {
 }
 
 void Widget::ToRunState() {
-  ui_->outputTextEdit->append("Playback started.");
+  ui_->outputTextEdit->append("PublishThread started.");
   ui_->runStopButton->setText("Stop");
   ui_->startButton->setEnabled(true);
   ui_->pauseButton->setEnabled(true);
@@ -231,7 +234,7 @@ void Widget::ToRunState() {
 }
 
 void Widget::ToStopState() {
-  ui_->outputTextEdit->append("Playback stopped.");
+  ui_->outputTextEdit->append("PublishThread stopped.");
   ui_->runStopButton->setText("Run");
   ui_->startButton->setEnabled(false);
   ui_->pauseButton->setEnabled(false);
@@ -239,4 +242,12 @@ void Widget::ToStopState() {
 
   ui_->fileButton->setEnabled(true);
   ui_->datasetComboBox->setEnabled(true);
+}
+
+void Widget::PrintWelcomInfo() {
+  ui_->outputTextEdit->append("1. Select 'Dataset'.");
+  ui_->outputTextEdit->append(
+      "2. Set the 'File' to the folder where you save the point cloud binary "
+      "file.");
+  ui_->outputTextEdit->append("3. Press 'Run'.");
 }

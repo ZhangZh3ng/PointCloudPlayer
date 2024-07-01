@@ -95,6 +95,7 @@ void PointCloudPublisher::SetFrequency(int freq) {
 }
 
 void PointCloudPublisher::PublishOnce() {
+  QMutexLocker locker(&mutex_);
   const auto& pc_path = file_paths_[curr_index_];
 
   if (dataset_ == nullptr) {

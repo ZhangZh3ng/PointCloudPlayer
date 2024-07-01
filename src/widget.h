@@ -8,7 +8,7 @@
 #include <QSlider>
 #include <QLabel>
 #include <QSpinBox>
-
+#include <memory>
 #include "pointcloudpublisher.h"
 #include "dataset/dataset.h"
 
@@ -40,7 +40,7 @@ private:
     Ui::Widget *ui_;
     PointCloudPublisher *publisher_thread_;
     std::vector<std::string> file_pathes_;
-    bool is_playing_;
+    bool is_runing_;
     bool is_looping_;
     int curr_index_;
     std::shared_ptr<Dataset> dataset_;
@@ -53,6 +53,7 @@ private:
 
     void ToRunState();
     void ToStopState();
+    void PrintWelcomInfo();
 
     void ResetPublisherThread();
 };
