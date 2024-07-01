@@ -8,9 +8,9 @@
 #include <QSlider>
 #include <QLabel>
 #include <QSpinBox>
-#include "pointcloudpublisher.h"
 
-#include "dataset/kitti_dataset.h"
+#include "pointcloudpublisher.h"
+#include "dataset/dataset.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -21,7 +21,7 @@ class Widget : public QWidget
     Q_OBJECT
 
 public:
-    Widget(QWidget *parent = nullptr);
+    Widget(ros::NodeHandle nh, QWidget *parent = nullptr);
     ~Widget();
 
 private slots:
@@ -34,31 +34,26 @@ private slots:
     void on_progressBar_valueChanged(int value);
     void on_frequencySpinBox_valueChanged(int value);
 
-    void appendLogMessage(const QString& message);
+    void AppendLogMessage(const QString& message);
 
 private:
-    enum DataSetType {
-        KITTI,
-        NCLT
-    };
-
-    Ui::Widget *ui;
-    PointCloudPublisher *publisherThread;
-    std::vector<std::string> pc_pathes_;
-    bool isPlaying;
-    bool isLooping;
-    int currentIndex;
-    DataSetType dataset_type;
+    Ui::Widget *ui_;
+    PointCloudPublisher *publisher_thread_;
+    std::vector<std::string> file_pathes_;
+    bool is_playing_;
+    bool is_looping_;
+    int curr_index_;
+    std::shared_ptr<Dataset> dataset_;
 
     void UpdateFolder(std::vector<std::string>& bin_file);
-    void updatePlayStatus();
-    void updateProgressLabel();
-    void updateProgressBar(int value);
-    void publishDone();
+    void UpdatePlayStatus();
+    void UpdateProgressLabel();
+    void UpdateProgressBar(int value);
+    void PublishDone();
 
     void ToRunState();
     void ToStopState();
 
-    void UpdatePublisherThread();
+    void ResetPublisherThread();
 };
 #endif // WIDGET_H

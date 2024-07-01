@@ -1,5 +1,7 @@
 <launch>
 
   <node name="point_cloud_player_node" pkg="point_cloud_player" type="point_cloud_player_node" output="screen">
-    </node>
+  </node>
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find point_cloud_player)/rviz/point_cloud_player.rviz" output="screen"/>
 </launch>

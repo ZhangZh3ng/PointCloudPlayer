@@ -19,7 +19,6 @@ bool KittiDataset::LoadPointCloud(const std::string& directory,
   lidar_data_file.read(reinterpret_cast<char*>(&lidar_data_buffer[0]),
                        num_elements * sizeof(float));
 
-  pcl_cloud.clear();
   pcl::PointXYZI point;
   for (std::size_t i = 0; i < lidar_data_buffer.size(); i += 4) {
     point.x = lidar_data_buffer[i];
