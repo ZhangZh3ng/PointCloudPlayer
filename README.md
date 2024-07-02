@@ -42,7 +42,7 @@ Point Cloud Player is a Qt-based application for visualizing and publishing **bi
 
 ```
 git clone to {project_ws}/src/
-catkin_ws
+catkin_make
 source devel/setup.bash
 roslaunch point_cloud_player point_cloud_player_node.launch
 ```
