@@ -48,6 +48,7 @@ add_executable(${PROJECT_NAME}_node
   src/pointcloudpublisher.cc
   src/dataset/kitti_dataset.cc
   src/dataset/nclt_dataset.cc
+  src/dataset/wildplace_dataset.cc
   ${UIC_HEADERS}
 )
 

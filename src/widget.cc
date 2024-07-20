@@ -9,6 +9,7 @@
 #include "pointcloudpublisher.h"
 #include "dataset/kitti_dataset.h"
 #include "dataset/nclt_dataset.h"
+#include "dataset/wildplace_dataset.h"
 
 Widget::Widget(ros::NodeHandle nh, QWidget* parent)
     : QWidget(parent),
@@ -24,6 +25,7 @@ Widget::Widget(ros::NodeHandle nh, QWidget* parent)
   ui_->datasetComboBox->addItem("KITTI");
   ui_->datasetComboBox->addItem("NCLT");
   ui_->datasetComboBox->addItem("MulRan");
+  ui_->datasetComboBox->addItem("WildPlace");
 
   connect(publisher_thread_, &PointCloudPublisher::LogMessage, this,
           &Widget::AppendLogMessage);
@@ -49,7 +51,7 @@ void Widget::UpdateFolder(std::vector<std::string>& bin_file) {
   file_pathes_ = bin_file;
   std::sort(file_pathes_.begin(), file_pathes_.end());
   ui_->outputTextEdit->append(
-      QString("Success: Found %1 .bin files in the selected folder.")
+      QString("Success: Found %1 point files in the selected folder.")
           .arg(file_pathes_.size()));
 
   ui_->progressBar->setMinimum(0);
@@ -69,6 +71,10 @@ void Widget::on_datasetComboBox_currentIndexChanged(int index) {
     case 2:
       // mulran actually same with kitti
       dataset_ = std::make_shared<KittiDataset>();
+      break;
+    case 3:
+      dataset_ = std::make_shared<WildPlaceDataset>();
+      break;
     default:
       dataset_ = std::make_shared<KittiDataset>();
       break;
@@ -109,7 +115,7 @@ void Widget::on_fileButton_clicked() {
 
     if (file_count == 0) {
       ui_->outputTextEdit->append(
-          "Error: No .bin files found in the selected folder.");
+          "Error: No point files found in the selected folder.");
     } else {
       // Success Case:
       UpdateFolder(bin_files);
